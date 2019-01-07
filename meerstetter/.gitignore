@@ -1,0 +1,4 @@
+build
+ComLog.txt
+*.pyc
+__pycache__

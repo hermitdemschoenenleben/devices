@@ -1,0 +1,1 @@
+from .hp8591a import HP8951A

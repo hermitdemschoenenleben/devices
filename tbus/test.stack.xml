@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Stack>
+  <Card name="dds" address="$A0" type="DDS2" />
+  <Card name="TA1" address="$40" type="tacurrentdriver3">
+    No 847, TA, I_max_A=1851mA, I_max_B=0mA
+  </Card>
+  <Card name="TA2" address="$50" type="tacurrentdriver3">
+    No 853, TA, I_max_A=1827mA, I_max_B=0mA
+  </Card>
+  <Card name="MO1" address="$60" type="tacurrentdriver3">
+    No 866, MO, I_max_A=220mA, I_max_B=219mA
+  </Card>
+  <Card name="MO2" address="$80" type="lasercurrentdriver_v4_3v3">
+    No 942, I_A=211mA, I_B=210mA
+  </Card>
+  <Card name="freq ctl" address="$E0" type="freqcontrol1">
+    No 804
+  </Card>
+
+  <Card name="power" address="$20" type="power" />
+  <Card name="ethernet" address="$10" type="ethernet" InterfaceID="141.20.46.46" />
+</Stack>
+

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBUS_TestApp", "TBUS_TestApp\TBUS_TestApp.csproj", "{18C8176D-EBD7-467D-8B32-0FD6639DDB7C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A9DAF055-30A5-40BE-8948-33431BB06701} = {A9DAF055-30A5-40BE-8948-33431BB06701}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TBus_Managed_Lib", "TBus_Managed_Lib\TBus_Managed_Lib.csproj", "{A9DAF055-30A5-40BE-8948-33431BB06701}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18C8176D-EBD7-467D-8B32-0FD6639DDB7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18C8176D-EBD7-467D-8B32-0FD6639DDB7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18C8176D-EBD7-467D-8B32-0FD6639DDB7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18C8176D-EBD7-467D-8B32-0FD6639DDB7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9DAF055-30A5-40BE-8948-33431BB06701}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9DAF055-30A5-40BE-8948-33431BB06701}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9DAF055-30A5-40BE-8948-33431BB06701}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9DAF055-30A5-40BE-8948-33431BB06701}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

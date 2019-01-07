@@ -1,0 +1,11 @@
+*.o
+tags
+.gdb_history
+libdelib.a
+orig_delib/liborigdelib.a
+.deps
+.dirstamp
+usb_bitp_200_demo
+m4
+autom4te.cache
+

@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Card name="Power2">
+
+  <FloatParameter name="ADC" defaultvalue="0.0" min="0" max="0.999984741" OnUnderflow="clip" OnOverflow="clip" abs="on" />
+      Read-only
+	  
+  <IntegerParameter name="Multiplexer,mux" defaultvalue="0" min="0" max="31"  OnUnderflow="clip" OnOverflow="clip" abs="on" />
+    Multiplexer channel
+      0  : Current +1C
+	  1  : Current +2C
+	  2  : Current -4C
+	  3  : Current -6C
+	  4  : Current -2C
+	  5  : Current +4C
+	  6  : Current +6C
+	  7  : NTC (10NTC, 10Kref, Normalized)
+	  8  : Bus NTC1, A38, (10NTC, 10Kref, Normalized) 
+	  9  : Bus NTC2, A37, (10NTC, 10Kref, Normalized) 
+	  10 : Bus NTC3, A36, (10NTC, 10Kref, Normalized) 
+	  11 : Bus NTC4, A35, (10NTC, 10Kref, Normalized) 
+	  12 : Bus NTC5, A34, (10NTC, 10Kref, Normalized) 
+	  13 : Bus NTC6, A33, (10NTC, 10Kref, Normalized) 
+	  14 : Bus NTC7, A32, (10NTC, 10Kref, Normalized) 
+	  15 : Bus NTC8, A31, (10NTC, 10Kref, Normalized) 
+	  16 : Aux NTC6, (10NTC?, 10Kref, Normalized) 
+	  17 : Aux NTC5, (10NTC?, 10Kref, Normalized) 
+	  18 : Aux NTC4, (10NTC?, 10Kref, Normalized) 
+	  19 : Aux NTC3, (10NTC?, 10Kref, Normalized) 
+	  20 : Aux NTC2, (10NTC?, 10Kref, Normalized) 
+	  21 : Aux NTC1, (10NTC?, 10Kref, Normalized) 
+	  22 : Voltage -2C
+	  23 : Voltage -4C
+	  24 : Voltage +2C
+	  25 : Voltage +1C
+	  26 : Voltage -6C
+	  27 : Voltage +4C
+	  28 : Voltage +6C
+	  29 : Current -15V
+	  30 : Current +3.3V
+	  31 : Current +15V
+	  
+  <Register name="Set mux" PreferedMethod="Default" DefaultDuration="100ns">
+      bits: write: ADC_/CS,ADC_CLK,-,Mux[4..0]
+	        read:  -,-,-,-, -,-,-,ADC_Data
+      <BusPattern direction="w" pattern="1,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+  </Register>	  
+  <Register name="Get ADC" PreferedMethod="Default" DefaultDuration="100ns">
+      bits: write: ADC_/CS,ADC_CLK,-,Mux[4..0]
+	        read:  -,-,-,-, -,-,-,ADC_Data
+      <BusPattern direction="w" pattern="1,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" /> 
+	  --read 0
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />	  
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-1]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-2]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-3]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-4]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-5]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-6]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-7]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-8]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-9]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-10]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-11]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-12]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-13]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-14]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-15]" />	  
+      <BusPattern direction="w" pattern="0,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="w" pattern="0,0,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+      <BusPattern direction="r" pattern="0,0,0,0, 0,0,0,ADC[-16]" />	  
+      <BusPattern direction="w" pattern="1,1,0,mux[4],mux[3],mux[2],mux[1],mux[0]" />
+  </Register>	  
+	  
+</Card>

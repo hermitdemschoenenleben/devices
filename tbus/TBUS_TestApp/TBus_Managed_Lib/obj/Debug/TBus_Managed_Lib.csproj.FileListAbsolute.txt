@@ -1,0 +1,8 @@
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\bin\Debug\ftd2xx.dll
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\bin\Debug\TBus.dll
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\bin\Debug\tbus_usb.dll
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\bin\Debug\TBus_Managed_Lib.dll
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\bin\Debug\TBus_Managed_Lib.pdb
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\obj\Debug\TBus_Managed_Lib.csprojResolveAssemblyReference.cache
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\obj\Debug\TBus_Managed_Lib.dll
+C:\Users\Julien\Desktop\TBUS_TestApp\TBus_Managed_Lib\obj\Debug\TBus_Managed_Lib.pdb

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Card name="Ethernet_Interface" interfacetype="Ethernet">
+
+ 
+  --------------------- Parameters and registers implemented by the FPGA --------------------
+  <BooleanParameter name="Clock divide,ClockDiv" defaultvalue="false" />
+     0=100MHz (unit is 10ns, length is 42 seconds), 1=10MHz (unit is 100ns, length is 420 seconds)
+  <IntegerParameter name="TriggerMode,Trig" defaultvalue="0" min="0" max="3" />
+    0=waiting/upload, 1=armed, 2=running, 3=running long
+
+
+  <IntegerParameter name="Memory address,addr" min="0" max="1023" defaultvalue="0" /> 
+  <IntegerParameter name="Time coordinate,Time" min="0" max="4e9" defaultvalue="0" /> 
+     The unit of time is given by ClockDiv. The maximum value corresponds to 42 or 420 seconds (or half of that when I32 and U32 are mixed up)	 
+  <IntegerParameter name="Next address,next" min="0" max="1023" defaultvalue="0" />
+  <IntegerParameter name="TBus state,TB" min="0" max="8191" defaultvalue="0" />
+  <IntegerParameter name="External state,ext" min="0" max="255" defaultvalue="0" />
+  <BooleanParameter name="Clock reset" defaultvalue="false" />
+
+  <Register name="Set Settings" PreferedMethod="Default" DefaultDuration="25ns">
+      <BusPattern address="+0" direction="w" pattern="0,0,0,0, Trig[1],Trig[0],ClockDiv,0" />
+  </Register>
+
+  <Register name="Get Settings" PreferedMethod="Default" DefaultDuration="25ns">
+      <BusPattern address="+0" direction="r" pattern="0,0,0,0, Trig[1],Trig[0],ClockDiv,0" />
+  </Register>
+  
+  <Register name="Set Address" PreferedMethod="Default" DefaultDuration="25ns">
+      <BusPattern address="+2" direction="w" pattern="0,0,0,addr[9],addr[8],addr[7],addr[6],addr[5]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],0,0,0" />
+  </Register>
+
+  <Register name="Get Address" PreferedMethod="Default" DefaultDuration="25ns">
+      <BusPattern address="+2" direction="r" pattern="0,0,0,0, 0,0,addr[9],addr[8]" />
+      <BusPattern address="+1" direction="r" pattern="addr[7],addr[6],addr[5],addr[4],addr[3],addr[2],addr[1],addr[0]" />
+  </Register>
+  
+  <Register name="Upload sequence element" PreferedMethod="Default" DefaultDuration="25ns">
+      <BusPattern address="+2" direction="w" pattern="0,0,0,addr[9],addr[8],addr[7],addr[6],addr[5]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],0,0,0" />
+      <BusPattern address="+3" direction="w" pattern="Time[7],Time[6],Time[5],Time[4],Time[3],Time[2],Time[1],Time[0]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],0,0,1" />
+      <BusPattern address="+3" direction="w" pattern="Time[15],Time[14],Time[13],Time[12],Time[11],Time[10],Time[9],Time[8]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],0,1,0" />
+      <BusPattern address="+3" direction="w" pattern="Time[23],Time[22],Time[21],Time[20],Time[19],Time[18],Time[17],Time[16]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],0,1,1" />
+      <BusPattern address="+3" direction="w" pattern="Time[31],Time[30],Time[29],Time[28],Time[27],Time[26],Time[25],Time[24]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],1,0,0" />
+      <BusPattern address="+3" direction="w" pattern="next[7],next[6],next[5],next[4],next[3],next[2],next[1],next[0]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],1,0,1" />
+      <BusPattern address="+3" direction="w" pattern="TB[5],TB[4],TB[3],TB[2],TB[1],TB[0],next[9],next[8]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],1,1,0" />
+      <BusPattern address="+3" direction="w" pattern="Ext[0],TB[12],TB[11],TB[10],TB[9],TB[8],TB[7],TB[6]" />
+      <BusPattern address="+1" direction="w" pattern="addr[4],addr[3],addr[2],addr[1],addr[0],1,1,1" />
+      <BusPattern address="+3" direction="w" pattern="Clock reset,Ext[7],Ext[6],Ext[5],Ext[4],Ext[3],Ext[2],Ext[1]" />
+  </Register>
+  
+</Card>

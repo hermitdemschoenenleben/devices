@@ -1,0 +1,302 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Card name="Laser Current Driver 1.0">
+  <!--name should match filename, in case of conflict follow filename-->
+
+  The current is set as a normalized value between 0 and 1.0, with 1.0 being maximum current
+  0.999985 is in binary a zero with 16 ones behind the comma, 1.0 has only zeros behind the comma
+  <FloatParameter name="Current A" defaultvalue="0.0" min="0" max="0.999984741" OnUnderflow="clip" OnOverflow="clip" abs="on" />
+  <FloatParameter name="Current B" defaultvalue="0.0" min="0" max="0.999984741" OnUnderflow="clip" OnOverflow="clip" abs="on" />
+  "Password" bits for output short-circuit. Note that the default is laser off. Also short-circuit implies fast shut-down.
+
+  <BooleanParameter name="Global Laser Enable" defaultvalue="false" />
+  <BooleanParameter name="Laser A Disable" defaultvalue="true" />
+  <BooleanParameter name="Laser B Disable" defaultvalue="true" />
+
+  Default power down mode of the DAC is "normal operation".
+  <IntegerParameter name="Power down mode A" defaultvalue="0" min="0" max="3"  OnUnderflow="clip" OnOverflow="clip" abs="on" />
+  <IntegerParameter name="Power down mode B" defaultvalue="0" min="0" max="3"  OnUnderflow="clip" OnOverflow="clip" abs="on" />
+
+  Signal source for fast shut down:
+     0..12: Tbus Trigger channel 0 to 12
+	 13: Manual shut down
+	 14,15: Manual shut down disabled (output on)
+  <IntegerParameter name="Signal source A" defaultvalue="13" min="0" max="15"  OnUnderflow="clip" OnOverflow="clip" abs="on" />
+  <IntegerParameter name="Signal source B" defaultvalue="13" min="0" max="15"  OnUnderflow="clip" OnOverflow="clip" abs="on" />
+
+
+  <BooleanParameter name="TempSens" defaultvalue="false" readonly="on" />
+  Read-only. Status of the temperature of the power board. True=cold; False=hot;
+
+  <FloatParameter name="Read_A" defaultvalue="0.0" readonly="on" />
+  <FloatParameter name="Read_B" defaultvalue="0.0" readonly="on" />
+  Read-only. Measurement of the actual current.
+  I_out=Read_A*3.3V*2/R.
+     3.3V is the converter reference (connected to the 3.3V digital supply)
+	 2 is because of an amplifier
+	 R is the measuring resistor on the power board
+  <FloatParameter name="Read_Temp" defaultvalue="0.0" readonly="on" />
+
+
+  <Register name="Get Laser Current" PreferedMethod="Default" DefaultDuration="100ns">
+      bits: DAC_Sync_A,DAC_SCLK/Read_CS,DAC_DIN_A,DAC_Sync_B,DAC_DIN_B, Shift_Latch,Shift_Clock,Shift_DataIn/Read_Clk
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,1" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="w" pattern="1,0,1,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,1,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-1], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-2], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-3], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-4], Read_B[-1],Read_A[-1],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-5], Read_B[-2],Read_A[-2],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-6], Read_B[-3],Read_A[-3],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-7], Read_B[-4],Read_A[-4],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-8], Read_B[-5],Read_A[-5],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-9], Read_B[-6],Read_A[-6],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,Read_Temp[-10], Read_B[-7],Read_A[-7],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-8],Read_A[-8],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-9],Read_A[-9],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-10],Read_A[-10],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-11],Read_A[-11],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-12],Read_A[-12],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-13],Read_A[-13],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-14],Read_A[-14],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-15],Read_A[-15],TempSens" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,1,0, 0,0,1" />
+      <BusPattern direction="r" pattern="1,0,0,1,0, Read_B[-16],Read_A[-16],TempSens" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,1" />
+  </Register>
+
+
+  <Register name="Set Laser Status" PreferedMethod="Default" DefaultDuration="100ns">
+      bits: DAC_Sync_A,DAC_SCLK,DAC_DIN_A,DAC_Sync_B,DAC_DIN_B, Shift_Latch,Shift_Clock,Shift_DataIn
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source A[3]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source A[3]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source A[2]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source A[2]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source A[1]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source A[1]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source A[0]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source A[0]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source B[3]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source B[3]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source B[2]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source B[2]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source B[1]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source B[1]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Signal Source B[0]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Signal Source B[0]" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Global Laser Enable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Global Laser Enable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Laser A Disable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Laser A Disable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,Laser B Disable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,1,Laser B Disable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 1,0,Laser B Disable" />
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,0" />
+  </Register>
+
+  <Register name="Get Status" PreferedMethod="Default" DefaultDuration="100ns">
+      bits: write: DAC_Sync_A,DAC_SCLK,DAC_DIN_A,DAC_Sync_B,DAC_DIN_B, Shift_Latch,Shift_Clock,Shift_DataIn
+      bits: read:  -,-,-,-, -,-,-,TempSens
+      <BusPattern direction="r" pattern="1,1,0,1,0, 0,0,TempSens" />
+  </Register>
+
+  <Register name="Set Current A" PreferedMethod="Default" DefaultDuration="100ns">
+             bits: DAC_Sync_A,DAC_SCLK,DAC_DIN_A,DAC_Sync_B,DAC_DIN_B, Shift_Latch,Shift_Clock,Shift_DataIn
+      <!-- pattern=" !Select A, Serial Clock, Data A, !Select B, Data B, Laser A Disable, Laser B Disable, Global Laser Enable" -->
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Power down mode A[1],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Power down mode A[1],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Power down mode A[0],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Power down mode A[0],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-1],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-1],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-2],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-2],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-3],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-3],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-4],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-4],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-5],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-5],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-6],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-6],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-7],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-7],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-8],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-8],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-9],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-9],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-10],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-10],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-11],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-11],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-12],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-12],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-13],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-13],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-14],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-14],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-15],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-15],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-16],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-16],1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,Current A[-16],1,0, 0,0,0" />
+  </Register>
+
+  <Register name="Set Current B" PreferedMethod="Default" DefaultDuration="100ns">
+     <!-- pattern=" !Select A, Serial Clock, Data A, !Select B, Data B, Laser A Disable, Laser B Disable, Global Laser Enable" -->
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Power down mode B[1], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Power down mode B[1], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Power down mode B[0], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Power down mode B[0], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-1], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-1], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-2], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-2], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-3], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-3], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-4], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-4], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-5], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-5], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-6], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-6], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-7], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-7], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-8], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-8], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-9], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-9], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-10], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-10], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-11], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-11], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-12], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-12], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-13], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-13], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-14], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-14], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-15], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-15], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,0,Current B[-16], 0,0,0" />
+      <BusPattern direction="w" pattern="1,0,0,0,Current B[-16], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,0,1,Current B[-16], 0,0,0" />
+  </Register>
+
+  <Register name="Set Current Both" PreferedMethod="Default" DefaultDuration="100ns">
+      <!-- pattern=" !Select A, Serial Clock, Data A, !Select B, Data B, Laser A Disable, Laser B Disable, Global Laser Enable" -->
+      <BusPattern direction="w" pattern="1,1,0,1,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,0,0,0, 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Power down mode A[1],0,Power down mode B[1], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Power down mode A[1],0,Power down mode B[1], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Power down mode A[2],0,Power down mode B[2], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Power down mode A[2],0,Power down mode B[2], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-1],0,Current B[-1], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-1],0,Current B[-1], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-2],0,Current B[-2], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-2],0,Current B[-2], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-3],0,Current B[-3], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-3],0,Current B[-3], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-4],0,Current B[-4], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-4],0,Current B[-4], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-5],0,Current B[-5], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-5],0,Current B[-5], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-6],0,Current B[-6], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-6],0,Current B[-6], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-7],0,Current B[-7], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-7],0,Current B[-7], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-8],0,Current B[-8], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-8],0,Current B[-8], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-9],0,Current B[-9], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-9],0,Current B[-9], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-10],0,Current B[-10], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-10],0,Current B[-10], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-11],0,Current B[-11], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-11],0,Current B[-11], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-12],0,Current B[-12], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-12],0,Current B[-12], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-13],0,Current B[-13], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-13],0,Current B[-13], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-14],0,Current B[-14], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-14],0,Current B[-14], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-15],0,Current B[-15], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-15],0,Current B[-15], 0,0,0" />
+      <BusPattern direction="w" pattern="0,1,Current A[-16],0,Current B[-16], 0,0,0" />
+      <BusPattern direction="w" pattern="0,0,Current A[-16],0,Current B[-16], 0,0,0" />
+      <BusPattern direction="w" pattern="1,1,Current A[-16],1,Current B[-16], 0,0,0" />
+  </Register>
+
+</Card>

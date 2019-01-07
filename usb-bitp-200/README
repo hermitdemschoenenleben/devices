@@ -1,0 +1,10 @@
+Library to use the USB-BITP-200 pattern generator from Deditec, 
+http://www.deditec.de/en/entwicklungstools/prod/bit-pattern-generator-36.html
+
+The project is based on original Deditec Delib distributed with a private
+licence: the code has been entirelly rewritten in C++ with a much cleaner
+structure and algorithms.
+
+The code is released with LGPL v3 licence (excluding the code in the folder
+delib/orig_delib which is the original library provided Deditec and kept
+here as reference).
