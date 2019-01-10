@@ -43,7 +43,7 @@ class RedPitaya:
         print(rp.digital_inout['DIO0_N'].value)
 
         # sets an analog slow output
-        rp.analog_output(0).voltage = 0.5
+        rp.analog_output[0].voltage = 0.5
     """
     _connection = None
 
