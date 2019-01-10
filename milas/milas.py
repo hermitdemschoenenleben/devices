@@ -1,6 +1,6 @@
 import numpy as np
 from scipy import constants
-from ben.devices import RedPitaya
+from devices import RedPitaya
 
 
 def voltage_to_temperature(voltage):
