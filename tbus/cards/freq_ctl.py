@@ -25,11 +25,9 @@ class FrequencyControlCard(TBusCard):
                 * beat_divider
                 * (2 if beat_divider2_enabled else 1)
         )
-    
+
     def convert_to_count(self, freq, gate_time, beat_divider, beat_divider2_enabled):
         resolution = (0.5 / gate_time * beat_divider * (2 if beat_divider2_enabled else 1)) / 256
-        print('resolution', resolution, gate_time, beat_divider, beat_divider2_enabled)
-        print(freq / resolution)
         return freq / resolution
 
     def get_count(self, channel):
@@ -50,12 +48,12 @@ class FrequencyControlCard(TBusCard):
         """
         self.set_int('GateTime', value / (1e-6))
         self.queue_register('Set Gate Time')
-    
+
     def get_gate_time(self):
         gate_time = self.get_int('GateTime') * 1e-6
         assert gate_time > 0, 'gate time not set!'
         return gate_time
-    
+
     def set_beat_divider(self, channel, value):
         assert value in [2, 4, 8], 'invalid divider'
         assert channel in [0, 1, 2], 'invalid channel value'
@@ -65,7 +63,7 @@ class FrequencyControlCard(TBusCard):
             8: 0
         }[value])
         self.queue_register('Set Beat Divider')
-    
+
     def get_beat_divider(self, channel):
         assert channel in [0, 1, 2], 'invalid channel value'
         return {
@@ -74,16 +72,16 @@ class FrequencyControlCard(TBusCard):
             2: 4,
             3: 2
         }[self.get_int('Beat Divider %d' % (channel + 1))]
-    
+
     def set_beat_divider2_enabled(self, channel, value):
         assert channel in [0, 1, 2], 'invalid channel value'
         self.set_bool('BeatDiv2_%d' % (channel + 1), value)
         self.queue_register('Set Beat Divider')
-    
+
     def get_beat_divider2_enabled(self, channel):
         assert channel in [0, 1, 2], 'invalid channel value'
         return self.get_bool('BeatDiv2_%d' % (channel + 1))
-    
+
     def set_memory_source(self, value):
         """
         Which variable should be stored in memory?
@@ -96,11 +94,11 @@ class FrequencyControlCard(TBusCard):
         assert isinstance(value, int), 'value has to be integer. Did you forget to specify a channel?'
         self.set_int('Memory source', value)
         self.queue_register('Set Memory Settings')
-    
+
     def set_memory_enabled(self, value):
         self.set_bool('Memory enable', value)
         self.queue_register('Set Memory Settings')
-    
+
     def set_scan_amplitude(self, value):
         """
         Sets scan amplitude. Allowed values are [-1, 1].
@@ -108,7 +106,7 @@ class FrequencyControlCard(TBusCard):
         value *= 32767
         self.set_int('Scan amplitude', value)
         self.queue_register('Set Scan Amplitude')
-    
+
     def set_scan_rate(self, value):
         """
         Sets scan rate. A value of 0 corresponds to a period of 655us, a value of
@@ -116,7 +114,7 @@ class FrequencyControlCard(TBusCard):
         """
         self.set_int('Scan rate', value)
         self.queue_register('Set Scan Rate')
-    
+
     def set_fast_offset(self, channel, value):
         """
         Sets offset of a fast output. Maximum value is 1, minimum value -1.
@@ -125,7 +123,7 @@ class FrequencyControlCard(TBusCard):
         value = (value + 1) * 8191.5
         self.set_int('FastOffset%d' % (channel + 1), value)
         self.queue_register('Set Fast Offset%d' % (channel + 1))
-    
+
     def set_channel_mode_fast(self, channel, mode):
         """
         Set output mode of a fast channel.
@@ -134,7 +132,7 @@ class FrequencyControlCard(TBusCard):
         assert channel in [0, 1, 2, 3], 'invalid channel'
         self.set_int('ChannelMode_fast%d' % (channel + 1), mode)
         self.queue_register('Set Channel Mode')
-    
+
     def set_channel_mode_slow(self, channel, mode):
         """
         Set output mode of a slow channel.
@@ -143,21 +141,21 @@ class FrequencyControlCard(TBusCard):
         assert channel in [0, 1, 2, 3], 'invalid channel'
         self.set_int('ChannelMode_slow%d' % (channel + 1), mode)
         self.queue_register('Set Channel Mode')
-    
+
     def set_fifo_enabled(self, value):
         self.set_bool('Memory FIFO enable', value)
         self.queue_register('Set Memory Settings')
-    
+
     def set_fifo_timebase_multiplier(self, value):
         assert 0 <= value <= 8191, 'invalid value'
         self.set_int('FifoTimebaseMultiplier', value)
         self.queue_register('Set FIFO counter options')
-    
+
     def set_fifo_counter_shift(self, value):
-        assert 0 <= 0 <= 7, 'invalid value' 
+        assert 0 <= 0 <= 7, 'invalid value'
         self.set_int('FifoCounterShift', value)
         self.queue_register('Set FIFO counter options')
-    
+
     def read_and_get_memory_block(self, addresses=range(1024)):
         """
         Reads a block of memory or the complete memory.
@@ -169,7 +167,7 @@ class FrequencyControlCard(TBusCard):
 
         def before_each_send(i):
             self.set_int('Memory address', addresses[i])
-        
+
         def after_each_read(i):
             data.append(self.get_int('Memory data'))
 
@@ -186,7 +184,7 @@ class FrequencyControlCard(TBusCard):
         self.set_int('Memory address', address)
         self.register_to_bus('Read Memory Data')
         return self.get_int('Memory data')
-    
+
     def read_counter(self, channel):
         assert channel in [0, 1, 2], 'invalid channel value'
         self.register_to_bus('GetCount%d' % (channel + 1))
@@ -194,16 +192,16 @@ class FrequencyControlCard(TBusCard):
     def read_slow(self, channel):
         assert channel in [0, 1, 2, 3], 'invalid channel value'
         self.register_to_bus('GetSlowIn%d' % (channel + 1))
-    
+
     def read_and_get_fifo_status(self):
         self.register_to_bus('Get FIFO Status')
         return self.get_int('Memory FIFO status')
-    
+
     def set_pid_address(self, address):
         assert 0 <= address <= 511, 'invalid address'
         self.set_int('PID_SetpointSelect', address)
         self.queue_register('Select PID Setpoint')
-    
+
     def set_and_apply_pid_setpoints(self, address, setpoints, sweeps):
         assert len(setpoints) == 3, 'one setpoint is needed for each of the 3 channels'
         assert len(sweeps) == 3, 'one sweep point is needed for each of the 3 channels'
@@ -219,20 +217,20 @@ class FrequencyControlCard(TBusCard):
             self.set_int('PID_S%d' % i, self.convert_to_count(
                 point, gate_time, beat_div, beat_div2_enabled
             ))
-        
+
         for i, sweep in enumerate(sweeps):
             self.set_bool('PID_W%d' % i, sweep)
-        
+
         self.register_to_bus('Set PID Setpoint')
-    
+
     def set_and_apply_pid_factors(self, channel, p, i):
         assert 0 <= channel <= 8, 'invalid channel'
         self.set_int('PID_Channel', channel)
         self.set_int('PID_I', i)
         self.set_int('PID_P', p)
-        
+
         self.register_to_bus('Set PID Factors')
-    
+
     def set_pid_signal_source(self, channel, source):
         """
         Sources: 0=counter0, 1=counter1, 2=counter2, 3=demod
@@ -242,11 +240,34 @@ class FrequencyControlCard(TBusCard):
 
         self.set_int('PID%d_SignalSource' % channel, source)
         self.queue_register('Set PID signal source')
-    
+
     def read_and_get_pid_int_overflow(self):
         self.register_to_bus('Get PID Overflow')
         return self.get_int('PID_IntOverflow')
-    
+
     def set_and_apply_reset_pid_overflow(self):
         self.set_bool('PID_Reset_overflow', True)
         self.register_to_bus('Set PID Globals')
+
+    def set_modulation_phase(self, phase):
+        assert 0 <= phase <= 255, 'phase has to be between 0 and 255'
+        self.set_int('Modulation phase', phase)
+        self.queue_register('Set Modulation Phase')
+
+    def set_modulation_amplitude(self, amplitude):
+        assert 0 <= amplitude <= 1
+        self.set_float('Modulation amplitude', amplitude)
+        self.queue_register('Set Modulation Amplitude')
+
+    def set_modulation_frequency_decimation(self, decimation):
+        """
+        0=50MHz, 1=25MHz, 2=12.5MHz, 3=6.25MHz, 4=3.125MHz, 5=1.5625MHz, 6=781kHz, 7=391kHz
+        """
+        assert 0 <= decimation <= 7, 'decimation has to be between 0 and 7'
+        self.set_int('Modulation frequency', decimation)
+        self.queue_register('Set Modulation Frequency')
+
+    def set_demodulation_setpoint(self, setpoint):
+        assert 0 <= setpoint <= 65535
+        self.set_int('DemodSetpoint', setpoint)
+        self.queue_register('Set Demod Setpoint')
