@@ -271,3 +271,8 @@ class FrequencyControlCard(TBusCard):
         assert 0 <= setpoint <= 65535
         self.set_int('DemodSetpoint', setpoint)
         self.queue_register('Set Demod Setpoint')
+    
+    def set_filter_tau(self, tau):
+        assert 0 <= tau <= 15
+        self.set_int('Filter_tau', tau)
+        self.queue_register('Set Filter Settings')
