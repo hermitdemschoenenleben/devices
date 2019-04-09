@@ -32,7 +32,7 @@ class RedPitaya:
         while not rp.was_triggered():
             sleep(0.1)
 
-        print(rp.fast_in[0].get_buffer())
+        print(rp.fast_in[0].read_buffer())
 
         # sets a digital slow output
         rp.digital_inout['DIO0_N'].set_direction('OUT')

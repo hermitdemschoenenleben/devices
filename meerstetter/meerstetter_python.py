@@ -108,10 +108,6 @@ class Meerstetter:
         # this scans all available USB ports until a TEC with the right address
         # is found
     """
-    # connection to the dll
-    _d = None
-    # current TEC address
-    _address = ALL_DEVICES
     # for each method of the wrapper, the types of the arguments are defined here
     _cmd_arguments = {
         'open': (ct.c_int, ct.c_int),
@@ -131,7 +127,12 @@ class Meerstetter:
         """
         Initializes the DLL and Opens a communication port.
         """
+        # current TEC address
+        self._address = ALL_DEVICES
+
         assert speed in SPEEDS, 'invalid speed value'
+
+        # connection to the dll
         self._d = ct.CDLL(path.join(path.dirname(__file__) or './', 'wrapper.so'))
         self._init_commands()
         self._d.cmd_open(port, speed)
@@ -262,11 +263,11 @@ class Meerstetter:
     @retry_on_dll_error
     def get_actual_voltage(self):
         return self.parameters['ACTUAL_VOLTAGE']
-    
+
     @retry_on_dll_error
     def get_parameter(self, p):
         return self.parameters[p]
-    
+
     @retry_on_dll_error
     def set_parameter(self, p, v):
         self.parameters[p] = v
