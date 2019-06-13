@@ -1,5 +1,8 @@
 from collections import namedtuple
+from time import sleep
+
 from .card import TBusCard
+
 
 class FrequencyControlCard(TBusCard):
     """
@@ -276,3 +279,62 @@ class FrequencyControlCard(TBusCard):
         assert 0 <= tau <= 15
         self.set_int('Filter_tau', tau)
         self.queue_register('Set Filter Settings')
+    
+    def flash_fpga(self, filename):
+        with open(filename, 'rb') as f:
+            data = f.read()
+            data_length = len(data)
+
+        self.set_bool('Data0Mode', False)
+        self.set_bool('nConfig', False)
+        self.register_to_bus('set status')
+
+        self.set_bool('nConfig', True)
+        self.register_to_bus('set status')
+
+        # We don't want to send the data byte by byte for performance reasons.
+        # On the other hand, we can't send the full FPGA bitstream at once because then the program
+        # crashes (probably due to some buffer overflow). Therefore we use this chunked method.
+        max_chunk_size = 10000
+        chunk_count = 0
+
+        while True:
+            print('%d %%' % ((data_length - len(data) / data_length * 100)))
+            chunk_count += 1
+            chunk_data = data[:max_chunk_size]
+            data = data[max_chunk_size:]
+
+            if len(chunk_data) == 0:
+                break
+
+            registers = ('Upload',) * len(chunk_data)
+            cards = (self.name,) * len(chunk_data)
+
+            def before_each_send(i):
+                self.set_int('FPGA config data', int(chunk_data[i]))
+
+            def after_each_read(i):
+                pass
+
+            from time import time
+            t1 = time()
+            self.stack.register_to_bus_multi(cards, registers,
+                                            before_each_send=before_each_send,
+                                            after_each_read=after_each_read,
+                                            ignore_recv=True)
+            print(time() - t1)
+    
+        sleep(.1)
+
+        self.register_to_bus('get status')
+        result = {
+            'init done': self.get_bool('Init done'),
+            'conf done': self.get_bool('Conf done'),
+            'crc error': self.get_bool('CRC Error')
+        }
+
+        self.set_bool('Data0Mode', True)
+        self.set_bool('nConfig', True)
+        self.register_to_bus('set status')
+
+        return result

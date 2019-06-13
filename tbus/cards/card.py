@@ -66,8 +66,8 @@ class TBusCard:
     def get_float(self, parameter):
         return self.stack.get_float(self.name, parameter)
 
-    def register_to_bus(self, register):
-        return self.stack.register_to_bus(self.name, register)
+    def register_to_bus(self, register, send=True, receive=True):
+        return self.stack.register_to_bus(self.name, register, send=send, receive=receive)
 
     def apply_registers(self):
         for register in self.pending_registers:

@@ -153,6 +153,7 @@ class TStack:
     bus = None
     calibration = None
     cards = {}
+    _reg_length_cache = {}
 
     def __init__(self, name, filename, calibration={}):
         self.dll = TBusDLL()
@@ -221,9 +222,23 @@ class TStack:
         i_id = string_buffer()
         self.dll.get_stack_interface(self.name, i_type, i_id)
         return from_ps(i_type).lower(), from_ps(i_id)
-
+    
     def _prepare_reg_to_bus(self, card, register):
-        reg_length = 1000
+        # at this point, we don't know how many addresses the register will try to access.
+        # The `register_to_bus` method doesn't return this explicitely, but instead
+        # expects a buffer it can write to that is sufficiently large.
+        # Therefore, by default we initialize a very large buffer. Then we find out how
+        # much of this was actually used and cache this value for upcoming calls to the
+        # same register. This improves performance significantly if the same call is done
+        # several thousand times.
+        reg_length_cache_key = (card, register)
+        if reg_length_cache_key in self._reg_length_cache:
+            reg_length = self._reg_length_cache[reg_length_cache_key]
+            reg_length_cached = True
+        else:
+            reg_length = 1000
+            reg_length_cached = False
+
         a = ct.c_int(reg_length)
         raw = (ct.c_uint * reg_length)(*((0,)*reg_length))
 
@@ -233,14 +248,17 @@ class TStack:
         something = raw[2::4]
         write_or_read = raw[3::4]
 
-        try:
-            first_null = addresses.index(0)
-        except ValueError:
-            first_null = len(addresses)
+        if not reg_length_cached:
+            try:
+                first_null = addresses.index(0)
+            except ValueError:
+                first_null = len(addresses)
 
-        addresses = addresses[:first_null]
-        data = data[:first_null]
-        write_or_read = write_or_read[:first_null]
+            addresses = addresses[:first_null]
+            data = data[:first_null]
+            write_or_read = write_or_read[:first_null]
+
+            self._reg_length_cache[reg_length_cache_key] = first_null * 4
 
         return addresses, data, write_or_read, something
 
@@ -266,13 +284,16 @@ class TStack:
 
         self.dll.bus_to_param(self.name, card, register, len(data), result_c)
     
-    def register_to_bus(self, card, register):
-        self.register_to_bus_send(card, register)
-        self.register_to_bus_rcv(card, register)
+    def register_to_bus(self, card, register, send=True, receive=True):
+        if send:
+            self.register_to_bus_send(card, register)
+        if receive:
+            self.register_to_bus_rcv(card, register)
     
     def register_to_bus_multi(self, cards, registers,
                               before_each_send=lambda x: x,
-                              after_each_read=lambda x: x):
+                              after_each_read=lambda x: x,
+                              ignore_recv=False):
         """
         Executes multiple register to bus calls as fast as possible.
         Therefore, at the beginning all data is sent, then all data is received.
@@ -283,10 +304,32 @@ class TStack:
             before_each_send(i)
             self.register_to_bus_send(card, register)
         
-        for i, [card, register] in enumerate(zip(cards, registers)):
-            self.register_to_bus_rcv(card, register)
-            after_each_read(i)
+        if not ignore_recv:
+            for i, [card, register] in enumerate(zip(cards, registers)):
+                self.register_to_bus_rcv(card, register)
+                after_each_read(i)
+        else:
+            buf_length = 0
 
+            # this cache is used to speed up things quite a bit by re-using the
+            # same buffers again. Normally, each call to `_prepare_reg_to_bus`
+            # creates a new buffer but we skip that as we want to ignore the
+            # data anyway.
+            register_cache = {}
+
+            for i, [card, register] in enumerate(zip(cards, registers)):
+                cache_key = (card, register)
+                if cache_key in register_cache:
+                    cached_data = register_cache[cache_key]
+                else:
+                    cached_data = self._prepare_reg_to_bus(card, register)
+                    register_cache[cache_key] = cached_data
+
+                addresses, data, write_or_read, something = cached_data
+                buf_length += 3 * len(addresses)
+            
+            self.bus.receive(buf_length)
+            
     def close(self):
         self.dll.close_stack(self.name)
         self.bus.close()

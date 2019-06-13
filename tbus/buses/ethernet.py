@@ -9,6 +9,7 @@ class EthernetBus:
         self.stack = stack
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
         self.conn.connect((ip, port))
+        
         #self.conn.setblocking(0)
 
     def send(self, bytes_):
