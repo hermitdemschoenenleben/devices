@@ -23,15 +23,47 @@ class CNT90:
         self.connect_to_device(address)
 
     def connect_to_device(self, address):
-        rm = visa.ResourceManager()
+        rm = visa.ResourceManager('@py')
         print(rm.list_resources())
 
-        if not address:
-            address = [a for a in rm.list_resources() if a.startswith('GPIB')][0]
+        found = False
+        for address in rm.list_resources():
+            try:
+                print('trying to connect to', address)
+                device = rm.open_resource(address)
+                print('connection successful! Checking whether it is the correct device')
+                assert 'CNT-9' in device.query('*IDN?')
+                print('it is! The device address is', address)
+                found = True
+            except:
+                pass
 
-        self.device = rm.open_resource(address)
-        identity = self.read('*IDN?')
-        assert 'CNT-9' in identity, 'invalid device identity: %s' % identity
+        if not found:
+            raise Exception("""
+                Unable to connect.
+                If you are on Linux, you need to install via pip:
+                    - pyvisa-py
+                    - pyusb
+
+                Then you have to do:
+                    sudo groupadd usbusers
+                    sudo usermod -a -G usbusers USERNAME
+                    nano  /etc/udev/rules.d/99-com.rules
+
+                    add the following line:
+
+                    SUBSYSTEM=="usb", MODE="0666", GROUP="usbusers"
+
+                    save the changes:
+
+                    /etc/init.d/udev  restart
+
+                    reboot
+
+                This tutorial is taken from https://stackoverflow.com/questions/52256123/unable-to-get-full-visa-address-that-includes-the-serial-number
+            """)
+        
+        self.device = device
 
         # clear state
         self.write('*CLS')

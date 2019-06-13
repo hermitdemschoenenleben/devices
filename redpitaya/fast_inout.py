@@ -26,6 +26,7 @@ class FastOut(RedPitayaChild):
         'amplitude': ('SOUR{idx}:VOLT?', 'SOUR{idx}:VOLT {value}'),
         'offset': ('SOUR{idx}:VOLT:OFFS?', 'SOUR{idx}:VOLT:OFFS {value}'),
         'phase': ('SOUR{idx}:PHAS?', 'SOUR{idx}:PHAS {value}'),
+        'waveform_data': ('SOUR{idx}:TRAC:DATA:DATA?', 'SOUR{idx}:TRAC:DATA:DATA {value}')
     }.items())
 
     def __init__(self, rp, idx):
@@ -44,7 +45,21 @@ class FastOut(RedPitayaChild):
 
     @_setter(_cmd['wave_form'], wave_form)
     def wave_form(self, value):
-        return str(value).upper()
+        wave_forms = ('SINE', 'SQUARE', 'TRIANGLE', 'SAWU', 'SAWD', 'PWM', 'ARBITRARY')
+        value = str(value).upper()
+        assert value in wave_forms
+        return value
+
+    @_getter(_cmd['waveform_data'])
+    def waveform_data(self, value):
+        return [float(n) for n in value.split(',')]
+
+    @_setter(_cmd['waveform_data'], waveform_data)
+    def waveform_data(self, data):
+        return ','.join(
+            '%.2f' % v
+            for v in data
+        )
 
     @_getter(_cmd['frequency'])
     def frequency(self, value):
