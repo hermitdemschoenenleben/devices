@@ -299,7 +299,7 @@ class FrequencyControlCard(TBusCard):
         chunk_count = 0
 
         while True:
-            print('%d %%' % ((data_length - len(data) / data_length * 100)))
+            print('%d %%' % ((data_length - len(data)) / data_length * 100))
             chunk_count += 1
             chunk_data = data[:max_chunk_size]
             data = data[max_chunk_size:]
@@ -316,13 +316,10 @@ class FrequencyControlCard(TBusCard):
             def after_each_read(i):
                 pass
 
-            from time import time
-            t1 = time()
             self.stack.register_to_bus_multi(cards, registers,
                                             before_each_send=before_each_send,
                                             after_each_read=after_each_read,
                                             ignore_recv=True)
-            print(time() - t1)
     
         sleep(.1)
 
