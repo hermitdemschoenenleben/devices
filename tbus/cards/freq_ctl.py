@@ -227,7 +227,7 @@ class FrequencyControlCard(TBusCard):
         self.register_to_bus('Set PID Setpoint')
 
     def set_and_apply_pid_factors(self, channel, p, i):
-        assert 0 <= channel <= 8, 'invalid channel'
+        assert 0 <= channel <= 7, 'invalid channel'
         self.set_int('PID_Channel', channel)
         self.set_int('PID_I', i)
         self.set_int('PID_P', p)
@@ -238,7 +238,7 @@ class FrequencyControlCard(TBusCard):
         """
         Sources: 0=counter0, 1=counter1, 2=counter2, 3=demod
         """
-        assert 0 <= channel <= 8, 'invalid channel'
+        assert 0 <= channel <= 7, 'invalid channel'
         assert 0 <= source <= 3, 'invalid source'
 
         self.set_int('PID%d_SignalSource' % channel, source)
